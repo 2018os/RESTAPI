@@ -9,8 +9,12 @@ const users = [
   }
 ];
 
+const models = require("../models");
+
 exports.index = (req, res) => {
-  return res.json(users);
+  models.user.findAll().then(result => {
+    res.json(result);
+  });
 };
 
 exports.show = (req, res) => {
@@ -18,13 +22,12 @@ exports.show = (req, res) => {
   if (!id && id !== 0) {
     return res.status(400).json({ error: "Incorrect id" });
   }
-  const user = users.filter(user => {
-    return user.id === id;
-  })[0];
-  if (!user) {
-    return res.status(404).json({ error: "Unknown user" });
-  }
-  return res.json(user);
+  models.user.findByPk(id).then(result => {
+    if (result === null) {
+      return res.status(404).json({ error: "UnKnown User" });
+    }
+    res.json(result);
+  });
 };
 
 exports.destroy = (req, res) => {
@@ -33,24 +36,31 @@ exports.destroy = (req, res) => {
     return res.status(400).json({ error: "Incorrect id" });
   }
 
-  const userIdx = users.findIndex(user => user.id === id);
-  if (userIdx === -1) {
-    return res.status(404).json({ error: "Unknown user" });
-  }
-
-  users.splice(userIdx, 1);
-  res.status(204).send();
+  models.user
+    .destroy({
+      where: {
+        id: id
+      }
+    })
+    .then(result => {
+      res.status(204).json({ message: "삭제 되었습니다." });
+    })
+    .catch(error => {
+      res.status(400).json({ error: error });
+    });
 };
 
 exports.create = (req, res) => {
   const name = req.body.name || "";
-  if (!name.length) {
-    return res.status(400).json({ error: "Incorrenct name" });
+  const password = req.body.password || "";
+  if (!name.length || !password.length) {
+    return res.status(400).json({ error: "Incorrenct name or password" });
   }
   const newUser = {
-    id: users.length,
-    name: name
+    name: name,
+    password: password
   };
-  users.push(newUser);
-  return res.status(201).json(newUser);
+  models.user.create(newUser).then(result => {
+    return res.status(201).json(result);
+  });
 };
