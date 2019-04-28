@@ -1,14 +1,3 @@
-const users = [
-  {
-    id: 0,
-    name: "KIM"
-  },
-  {
-    id: 1,
-    name: "LEE"
-  }
-];
-
 const models = require("../models");
 
 exports.index = (req, res) => {
