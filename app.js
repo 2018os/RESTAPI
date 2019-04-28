@@ -16,9 +16,7 @@ app.use("/users", usersRouter);
 app.use("/auth", authRouter);
 
 // DB / sequelize 연결
-
 const models = require("./models/index.js");
-
 models.sequelize
   .sync()
   .then(() => {
