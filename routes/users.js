@@ -10,5 +10,5 @@ router.get("/:id", middlewares.isLoggedIn, controller.show);
 
 router.delete("/:id", middlewares.isLoggedIn, controller.destroy);
 
-router.post("/", middlewares.isLoggedIn, controller.create);
+router.post("/", controller.create);
 module.exports = router;
